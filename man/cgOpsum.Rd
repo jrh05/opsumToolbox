@@ -16,7 +16,7 @@ A list of class cgOpsum
 Convert character vector of opsums to cgOpsum class
 }
 \examples{
-file <- system.file("extdata", "07JAN15 OPSUM.txt", package = "cgToolkit")
+file <- system.file("extdata", "07JAN15_OPSUM.txt", package = "opsumToolbox")
 x <- readtext::readtext(file)
 opsum <- cgOpsum(x$text)
 }

@@ -50,7 +50,7 @@ splitParagraph <- function (dat) {
 #' @param x A character vector.
 #' @return A list of class cgOpsum
 #' @examples
-#' file <- system.file("extdata", "07JAN15 OPSUM.txt", package = "opsumToolbox")
+#' file <- system.file("extdata", "07JAN15_OPSUM.txt", package = "opsumToolbox")
 #' x <- readtext::readtext(file)
 #' opsum <- cgOpsum(x$text)
 #' @export
