@@ -6,7 +6,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getDTG <- function (x) {
+getDTG <- function (x) {
   if (!any(grepl("[0-9 ][A-Z] [A-Z]{3} ?[0-9]{2}", x))) return(x)
   y <- names(x)
   x <- sapply(strsplit(x, "TO"), trimws) #trimws(strsplit(x, "TO"))
@@ -23,7 +23,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getBinary <- function (x) {
+getBinary <- function (x) {
   x <- trimws(strsplit(x, ":"))
   x <- sapply(x, function (y) {
     if (length(y) == 2) {
@@ -42,7 +42,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getWeather <- function (x) {
+getWeather <- function (x) {
   a <- "DESC"
   x <- gsub("ICE: [^)]*[)]:?", "ICE: ", x)
   x <- trimws(strsplit(x, ":"))
@@ -58,7 +58,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getComms <- function (x) {
+getComms <- function (x) {
   x <- strsplit(x, "[[:space:]]{2,}")
   y <- x[length(x)+-1:0]
   x <- x[sapply(x, length)!=1]
@@ -76,7 +76,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getLiquid <- function (x) {
+getLiquid <- function (x) {
   x <- strsplit(x, "[[:space:]]+")
   width <- max(sapply(x, length))
   x <- lapply(x, function (y) c(y, rep(NA, width-length(y))))
@@ -100,7 +100,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.getEngCas <- function (x) {
+getEngCas <- function (x) {
   y <- unlist(strsplit(x[1], "/"))
   x <- x[-1]
   z <- unlist(strsplit(paste(x[seq(2,6,by=2)], collapse = "   "), "[[:space:]]+"))
@@ -119,7 +119,7 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.asText <- function (x) paste(x, collapse = "/n")
+asText <- function (x) paste(x, collapse = "/n")
 
 #' Default Function to convert a  to .
 #'
@@ -127,31 +127,31 @@
 #' @return Named character vector
 #' @keywords internal
 #' @export
-.noChange <- function (x) x
+noChange <- function (x) x
 
 #' @export
-.extractFuncs <- function (x = NULL) {
+extractFuncs <- function (x = NULL) {
   return(c(`MSG DTG` = ".asText",
-    `FM` = ".noChange",
-    `TO` = ".asText",
-    `INFO` = ".asText",
-    `SUBJ` = ".asText",
-    `PERIOD COVERED` = ".getDTG",
-    `SMALL BOAT STATUS` = ".noChange",
-    `LIQUID LOAD` = ".getLiquid",
-    `CURRENT WX DESCRIPTION` = ".asText",
-    `MISSION CRITICAL CASUALTIES` = ".asText",
-    `ENGINEERING CASUALTIES` = ".getEngCas",
-    `PATROL EFFORTS` = ".asText",
-    `COMMS SYSTEM` = ".getComms",
-    `PATROL INTENTIONS` = ".asText",
-    `CO COMMENTS` = ".asText",
-    `POC` = ".asText",
-    `DATE DPT HP` = ".noChange",
-    `FOREIGN FISHING VESSELS SIGHTED` = ".noChange",
-    `FOREIGN VESSELS SIGHTED` = ".noChange",
-    `VESSEL SIGHTINGS` = ".noChange",
-    `VESSELS SIGHTED` = ".noChange",
+    `FM` = "noChange",
+    `TO` = ".sText",
+    `INFO` = "asText",
+    `SUBJ` = "asText",
+    `PERIOD COVERED` = "getDTG",
+    `SMALL BOAT STATUS` = "noChange",
+    `LIQUID LOAD` = "getLiquid",
+    `CURRENT WX DESCRIPTION` = "asText",
+    `MISSION CRITICAL CASUALTIES` = "asText",
+    `ENGINEERING CASUALTIES` = "getEngCas",
+    `PATROL EFFORTS` = "asText",
+    `COMMS SYSTEM` = "getComms",
+    `PATROL INTENTIONS` = "asText",
+    `CO COMMENTS` = "asText",
+    `POC` = "asText",
+    `DATE DPT HP` = "noChange",
+    `FOREIGN FISHING VESSELS SIGHTED` = "noChange",
+    `FOREIGN VESSELS SIGHTED` = "noChange",
+    `VESSEL SIGHTINGS` = "noChange",
+    `VESSELS SIGHTED` = "noChange",
     x))
 }
 
@@ -164,7 +164,7 @@ data.frame.cgOpsum.list <- function (object) {
   dat2 <- plyr::llply(dat2, function (x) {
     z <- names(x)
     x <- as.list(x@.Data)
-    funcs <- get(".extractFuncs", findFunction(".extractFuncs")[[1]])
+    funcs <- get("extractFuncs", findFunction("extractFuncs")[[1]])
     funcs <- funcs()[z]
     out <- Map(function (a, b) try(do.call(a, list(b))), a=funcs, b=x[])
     unlist(out)

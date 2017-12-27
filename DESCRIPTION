@@ -7,7 +7,7 @@ Author:  person("Jonathan", "Harris", email = "jonathan.r.harris@uscga.edu",
 Maintainer: Jonathan Harris <jonathan.r.harris@uscga.edu>
 Description: Provides set of tools for importing and data-wrangling USCG msgs
     such as operational summaries, deployment summaries, and more.
-License: tbd
+License: 
 Encoding: UTF-8
 LazyData: true
 Imports:
