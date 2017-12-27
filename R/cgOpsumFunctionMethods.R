@@ -114,6 +114,15 @@ subset.cgOpsum.list <- function (object, subset) {
   as.cgOpsum.list(`[`(object, subset))
 }
 
+#' slice Method for cgOpsum.list
+#' @param object A cgOpsum.list object.
+#' @param slice A vector of names or indices to subset
+#' @return A list
+#' @export
+slice.cgOpsum.list <- function (object, slice) {
+  lapply(object, `[`, slice)
+}
+
 setGeneric("print", print)
 setGeneric("show", show)
 setGeneric("subset", subset)

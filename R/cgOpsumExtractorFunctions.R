@@ -135,9 +135,9 @@ noChange <- function (x) x
 #' @return Named character vector
 #' @export
 extractFuncs <- function (x = NULL) {
-  return(c(`MSG DTG` = ".asText",
+  return(c(`MSG DTG` = "asText",
     `FM` = "noChange",
-    `TO` = ".sText",
+    `TO` = "asText",
     `INFO` = "asText",
     `SUBJ` = "asText",
     `PERIOD COVERED` = "getDTG",
