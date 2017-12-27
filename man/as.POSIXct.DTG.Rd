@@ -4,7 +4,7 @@
 \alias{as.POSIXct.DTG}
 \title{Convert DTG class object to POSIXct class object}
 \usage{
-\method{as.POSIXct}{DTG}(x)
+as.POSIXct.DTG(x)
 }
 \arguments{
 \item{x}{A DTG object.}
@@ -14,5 +14,5 @@ Convert DTG class object to POSIXct class object
 }
 \examples{
 x <- DTG("220815ZDEC17")
-as.POSIXct(x)
+as.POSIXct.DTG(x)
 }

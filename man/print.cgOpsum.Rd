@@ -4,7 +4,7 @@
 \alias{print.cgOpsum}
 \title{print Method for cgOpsum}
 \usage{
-\method{print}{cgOpsum}(obj)
+print.cgOpsum(obj)
 }
 \arguments{
 \item{obj}{A cgOpsum object.}

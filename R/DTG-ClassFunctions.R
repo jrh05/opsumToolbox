@@ -1,5 +1,7 @@
 # Defines the DTG class and defines function to convert to POSIXct time
 
+setGeneric("as.POSIXct")
+
 #' An S4 class to represent a date-time-group (DTG)
 #' @keywords internal
 #' @export
@@ -66,6 +68,8 @@ show.DTG <- function (x) {
   cat(x@.Data)
 }
 
+#' Show Method for DTG
+#' @param object A DTG object.
 #' @export
 setMethod("show", signature(object="DTG"), function (object) {
   show.DTG(object)
@@ -77,7 +81,7 @@ setMethod("show", signature(object="DTG"), function (object) {
 #' @param x A DTG object.
 #' @examples
 #' x <- DTG("220815ZDEC17")
-#' as.POSIXct(x)
+#' as.POSIXct.DTG(x)
 #' @export
 as.POSIXct.DTG <- function (x) {
   tzs <- c(1:12,1*1:12,0)

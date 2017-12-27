@@ -4,7 +4,7 @@
 \alias{print.DTG}
 \title{Print Method for DTG}
 \usage{
-\method{print}{DTG}(x)
+print.DTG(x)
 }
 \arguments{
 \item{x}{A DTG object.}

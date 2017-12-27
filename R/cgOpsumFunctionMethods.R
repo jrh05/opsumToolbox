@@ -1,6 +1,7 @@
 # Create cgOpsum Functions and Methods
 
 #' @importFrom methods setClass setValidity setMethod setRefClass new
+#' @importFrom methods findFunction show
 #' @importFrom dplyr %>%
 #' @importFrom plyr ldply
 #'
@@ -85,11 +86,15 @@ print.cgOpsum <- function (obj) {
   }
 }
 
+#' Show Method for cgOpsum
+#' @param object A cgOpsum object.
 #' @export
 setMethod("show", signature(object="cgOpsum"), function (object) {
   show.cgOpsum(object)
 })
 
+#' Show Method for cgOpsum.list
+#' @param object A cgOpsum.list object.
 #' @export
 setMethod("show", signature(object="cgOpsum.list"), function (object) {
   print.cgOpsum(object)
@@ -100,7 +105,15 @@ as.cgOpsum.list <- function (object) {
   makeopsum.list(object)
 }
 
+#' subset Method for cgOpsum.list
+#' @param object A cgOpsum.list object.
+#' @param subset A vector of names or indices to subset
+#' @return A cgOpsum.list object
 #' @export
 subset.cgOpsum.list <- function (object, subset) {
   as.cgOpsum.list(`[`(object, subset))
 }
+
+setGeneric("print", print)
+setGeneric("show", show)
+setGeneric("subset", subset)
