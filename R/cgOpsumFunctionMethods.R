@@ -63,9 +63,10 @@ cgOpsum <- function (x) {
 
 #' show Method for cgOpsum
 #'
-#' @param obj A cgOpsum object.
+#' @param obj A cgOpsum object
+#' @param i An integer vector indicating which opsum to display
 #' @export
-show.cgOpsum <- function (obj, i = 1) {
+show.cgOpsum <- function (obj, i = 1L) {
   tmp <- c(A = "cgOpsum", `msg dtg` = obj$`MSG DTG`,
            `from` = paste0(obj$FM, "."),
            `SUBJ:` = obj$SUBJ)

@@ -1,15 +1,16 @@
 Package: opsumToolbox
 Type: Package
 Title:  Coast Guard Toolbox For Opsum Analysis
-Version: 0.1.0.9001
+Version: 0.1.0.9002
 Author:  person("Jonathan", "Harris", email = "jonathan.r.harris@uscga.edu",
                   role = c("aut", "cre"))
 Maintainer: Jonathan Harris <jonathan.r.harris@uscga.edu>
 Description: Provides set of tools for importing and data-wrangling USCG msgs
     such as operational summaries, deployment summaries, and more.
-License: 
+License: LGPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.0.1)
 Imports:
     dplyr,
     plyr,

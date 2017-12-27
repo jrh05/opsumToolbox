@@ -4,10 +4,12 @@
 \alias{show.cgOpsum}
 \title{show Method for cgOpsum}
 \usage{
-show.cgOpsum(obj, i = 1)
+show.cgOpsum(obj, i = 1L)
 }
 \arguments{
-\item{obj}{A cgOpsum object.}
+\item{obj}{A cgOpsum object}
+
+\item{i}{An integer vector indicating which opsum to display}
 }
 \description{
 show Method for cgOpsum

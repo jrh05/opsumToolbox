@@ -129,6 +129,10 @@ asText <- function (x) paste(x, collapse = "/n")
 #' @export
 noChange <- function (x) x
 
+#' Default Function to produce function map a  to .
+#'
+#' @param x A Named character vector.
+#' @return Named character vector
 #' @export
 extractFuncs <- function (x = NULL) {
   return(c(`MSG DTG` = ".asText",
