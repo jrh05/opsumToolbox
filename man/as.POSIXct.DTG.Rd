@@ -14,5 +14,5 @@ Convert DTG class object to POSIXct class object
 }
 \examples{
 x <- DTG("220815ZDEC17")
-as.POSIXct.DTG(x)
+as.POSIXct(x)
 }

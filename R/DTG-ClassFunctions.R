@@ -81,7 +81,7 @@ setMethod("show", signature(object="DTG"), function (object) {
 #' @param x A DTG object.
 #' @examples
 #' x <- DTG("220815ZDEC17")
-#' as.POSIXct.DTG(x)
+#' as.POSIXct(x)
 #' @export
 as.POSIXct.DTG <- function (x) {
   tzs <- c(1:12,1*1:12,0)

@@ -7,15 +7,21 @@
 #' @keywords internal
 #' @export
 getDTG <- function (x) {
-  if (!any(grepl("[0-9 ][A-Z] [A-Z]{3} ?[0-9]{2}", x))) return(x)
-  y <- names(x)
-  x <- sapply(strsplit(x, "TO"), trimws) #trimws(strsplit(x, "TO"))
+  if (!any(grepl("[0-9 ][A-Z]+ [A-Z]{3} ?[0-9]{2}", x))) return(x)
+  x <- gsub("(ARR|EDT)","\\1:", x)
+  x <- gsub("([0-9]):([0-9])", "\\1-\\2", x)
+  x <- gsub("^(.*[0-9]) +TO +([0-9].*)$","START: \\1 : END: \\2", x)
+  x <- gsub("^.*POSIT:", "POSIT:", x)
+  x <- lapply(strsplit(x, ":"), trimws)
   x <- unlist(x)
-  x <- gsub("^.*POSIT: ", "", x)
+  x[x=="POSIT"] <- paste0("POSIT", 1:(sum(x=="POSIT")))
   x <- as.vector(x)
-  names(x) <- paste0(y, 1:length(x))
+  y <- x[seq(1, length(x), by = 2)]
+  x <- x[seq(2, length(x), by = 2)]
+  names(x) <- y
   x
 }
+
 
 #' Default Function to convert a  to .
 #'
