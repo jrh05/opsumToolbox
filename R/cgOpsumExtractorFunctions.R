@@ -125,6 +125,30 @@ getEngCas <- function (x) {
 #' @return Named character vector
 #' @keywords internal
 #' @export
+getSmallBoat <- function (x) {
+  x <- gsub("([0-9()]{3})( .+)) {2,}", "\\1\\2), STATUS\\1: ", x)
+  x <- gsub(") ", "): ", x)
+  x <- lapply(strsplit(x, ",|: "), trimws)
+  ct <- grep(" STATUS|HOURS|TIME", x) #which(sapply(x, length) == 1)
+  labs <- unlist(c("SMALL BOAT STATUS", sapply(x[ct], function (y) y[1])))
+  names(x) <- rep(labs, times = c(ct, length(x)+1) - c(1,ct))
+  names(x) <- gsub(":", "", names(x))
+  x <- x[which(sapply(x, length) != 1)]
+  x <- sapply(x, function (y) {
+    ind <- seq(2, length(y), by = 2)
+    z <- y[ind]
+    names(z) <- y[ind-1]
+    z
+  })
+  unlist(x)
+}
+
+#' Default Function to convert a  to .
+#'
+#' @param x A character vector.
+#' @return Named character vector
+#' @keywords internal
+#' @export
 asText <- function (x) paste(x, collapse = "/n")
 
 #' Default Function to convert a  to .
@@ -147,7 +171,7 @@ extractFuncs <- function (x = NULL) {
     `INFO` = "asText",
     `SUBJ` = "asText",
     `PERIOD COVERED` = "getDTG",
-    `SMALL BOAT STATUS` = "noChange",
+    `SMALL BOAT STATUS` = "getSmallBoat",
     `LIQUID LOAD` = "getLiquid",
     `CURRENT WX DESCRIPTION` = "asText",
     `MISSION CRITICAL CASUALTIES` = "asText",
