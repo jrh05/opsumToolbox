@@ -18,13 +18,13 @@ A DTG object
 \description{
 An S4 class to represent a date-time-group (DTG)
 
-Change character string to a DTG object.
+Change character vector to a DTG vector.
 }
 \examples{
 DTG("220815ZDEC17")
-DTG("181918BDEC17")
+DTG(c(dtg1 = "181918BDEC17", dtg2 = "182318BDEC17")) # Returns Warning
 \dontrun{
-DTG("182918BDEC17") # Returns Error
+DTG("182918BDEC17") # Returns Warning
 }
 
 }
