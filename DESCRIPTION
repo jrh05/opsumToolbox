@@ -1,7 +1,7 @@
 Package: opsumToolbox
 Type: Package
 Title: Coast Guard Toolbox For Opsum Analysis
-Version: 0.1.0.9008
+Version: 0.1.0.9009
 Author: person("Jonathan", "Harris", email = "jonathan.r.harris@uscga.edu",
                   role = c("aut", "cre"))
 Maintainer: Jonathan Harris <jonathan.r.harris@uscga.edu>

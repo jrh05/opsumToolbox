@@ -48,7 +48,7 @@ isvalidDTG <- setValidity("DTG", validDTG)
 #' @return A DTG object
 #' @examples
 #' DTG("220815ZDEC17")
-#' DTG(c(dtg1 = "181918BDEC17", dtg2 = "182318BDEC17")) # Returns Warning
+#' DTG(c(dtg1 = "181918BDEC17", dtg2 = "182318BDEC17"))
 #' \dontrun{
 #' DTG("182918BDEC17") # Returns Warning
 #' }
@@ -60,9 +60,10 @@ DTG <- function (x) {
       warning (paste(y, "is not a valid DTG"), immediate. = TRUE)
       return (NA)
     }
-    y
+    splitDTG(y)$DTG
   }, simplify = TRUE)
   out <- new("DTG", .Data = out)
+  out
 }
 
 #' Show Method for DTG
@@ -85,27 +86,26 @@ setMethod("show", signature(object="DTG"), function (object) {
 #' @param x A DTG object.
 #' @examples
 #' x <- DTG("220815ZDEC17")
-#' \dontrun{
 #' as.POSIXct(x)
-#' }
 #' @export
-as.POSIXct.DTG <- function (x) {
-  # x <- lapply(x, splitDTG)
-  # convertDTG <- function (y) {
-  #   y <- y$values
-  #   tzs <- c(1:12,1*1:12,0)
-  #   #tzs <- sapply(tzs, sprintf, fmt="%04d")
-  #   tzs <- paste0("Etc/GMT", c(rep("+",12),rep("-",12),"+"), tzs)
-  #   names(tzs) <- LETTERS[-10]
-  #   .d <- y$day
-  #   .H.M <- y$time4
-  #   .z <- tzs[y$tz]
-  #   .m <- grep(y$month, toupper(month.abb))
-  #   .Y <- if (as.integer(y$year) < 100) 2000+as.integer(y$year)
-  #   y1 <- paste(paste(c(.Y, .m, .d), collapse = "-"),
-  #               sub("(..)(..)", "\\1:\\2", .H.M), .z)
-  #   y1 <- as.POSIXct(y1, "%Y-%m-%d %H:%M", tz = .z)
-  #   y1
-  # }
-  # sapply(x, convertDTG, simplify = TRUE)
+as.POSIXct.DTG <- function (x, tz = "") {
+  x <- lapply(x, splitDTG)
+  convertDTG <- function (y) {
+    y <- y$values
+    if (is.na(y$day)) return (NA)
+    tzs <- c(1:12,1*1:12,0)
+    #tzs <- sapply(tzs, sprintf, fmt="%04d")
+    tzs <- paste0("Etc/GMT", c(rep("+",12),rep("-",12),"+"), tzs)
+    names(tzs) <- LETTERS[-10]
+    .d <- y$day
+    .H.M <- y$time4
+    .z <- tzs[y$tz]
+    .m <- grep(y$month, toupper(month.abb))
+    .Y <- if (as.integer(y$year) < 100) 2000+as.integer(y$year)
+    y1 <- paste(paste(c(.Y, .m, .d), collapse = "-"),
+                sub("(..)(..)", "\\1:\\2", .H.M), .z)
+    y1 <- as.POSIXct(y1, "%Y-%m-%d %H:%M", tz = .z)
+    y1
+  }
+  as.POSIXct(sapply(x, convertDTG), origin = "1970-01-01 00:00.00 UTC", tz = tz)
 }

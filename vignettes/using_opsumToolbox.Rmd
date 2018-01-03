@@ -38,6 +38,10 @@ docnames(corpus_txt) <- OPSUMS$doc_id
 x <- texts(corpus_txt)
 y <- cgOpsum(x)
 z <- data.frame.cgOpsum.list(y)
-z[,1]
+z$DTG.START <- DTG(z$`PERIOD COVERED.START`)
+z$POSIXUTC.START <- as.POSIXct(z$DTG.START, tz = "GMT")
+z <- z[order(z$POSIXUTC.START), ]
+z[, c("PERIOD COVERED.START", "CO COMMENTS")]
+z[, c("MSG DTG", "PERIOD COVERED.START", "DTG.START", "POSIXUTC.START")]
 y.feb <- subset(y, grep("FEB", x, ignore.case = TRUE))
 ```

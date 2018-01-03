@@ -22,7 +22,7 @@ Change character vector to a DTG vector.
 }
 \examples{
 DTG("220815ZDEC17")
-DTG(c(dtg1 = "181918BDEC17", dtg2 = "182318BDEC17")) # Returns Warning
+DTG(c(dtg1 = "181918BDEC17", dtg2 = "182318BDEC17"))
 \dontrun{
 DTG("182918BDEC17") # Returns Warning
 }
