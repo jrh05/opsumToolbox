@@ -4,12 +4,10 @@
 \alias{as.POSIXct.DTG}
 \title{Convert DTG class object to POSIXct class object}
 \usage{
-\method{as.POSIXct}{DTG}(x, tz = "", ...)
+\method{as.POSIXct}{DTG}(x, ...)
 }
 \arguments{
 \item{x}{A DTG object.}
-
-\item{tz}{A string representing timezone, e.g. "EST"}
 
 \item{...}{further arguments passed to or from other methods.}
 }

@@ -4,10 +4,10 @@
 \alias{validDTG}
 \title{Checks validity of DTG object.}
 \usage{
-validDTG(object)
+validDTG(x)
 }
 \arguments{
-\item{object}{A suspected DTG object.}
+\item{x}{A suspected DTG object.}
 }
 \value{
 A logical vector
