@@ -4,10 +4,14 @@
 \alias{as.POSIXct.DTG}
 \title{Convert DTG class object to POSIXct class object}
 \usage{
-as.POSIXct.DTG(x, tz = "")
+\method{as.POSIXct}{DTG}(x, tz = "", ...)
 }
 \arguments{
 \item{x}{A DTG object.}
+
+\item{tz}{A string representing timezone, e.g. "EST"}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 Convert DTG class object to POSIXct class object
@@ -15,4 +19,5 @@ Convert DTG class object to POSIXct class object
 \examples{
 x <- DTG("220815ZDEC17")
 as.POSIXct(x)
+as.POSIXct(x, tz = "PDT")
 }

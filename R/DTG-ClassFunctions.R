@@ -1,12 +1,5 @@
 # Defines the DTG class and defines function to convert to POSIXct time
 
-setGeneric("as.POSIXct")
-
-#' An S4 class to represent a date-time-group (DTG)
-#' @keywords internal
-#' @export
-DTG <- setClass("DTG", contains = "character")
-
 #' Change character string DTG to an intermediate object.
 #'
 #' @param x A character vector.
@@ -37,11 +30,6 @@ validDTG <- function (object) {
                 !(object$month %in% toupper(month.abb)))))
 }
 
-#' Sets validity function for DTG class.
-#' @importFrom methods setValidity
-#' @keywords internal
-isvalidDTG <- setValidity("DTG", validDTG)
-
 #' Change character vector to a DTG vector.
 #'
 #' @param x A character vector.
@@ -62,7 +50,7 @@ DTG <- function (x) {
     }
     splitDTG(y)$DTG
   }, simplify = TRUE)
-  out <- new("DTG", .Data = out)
+  class(out) <- "DTG"
   out
 }
 
@@ -73,22 +61,17 @@ show.DTG <- function (x) {
   cat(x@.Data, "\n")
 }
 
-#' Show Method for DTG
-#' @param object A DTG object.
-#' @export
-setMethod("show", signature(object="DTG"), function (object) {
-  show.DTG(object)
-})
-
-
 #' Convert DTG class object to POSIXct class object
 #'
 #' @param x A DTG object.
+#' @param tz A string representing timezone, e.g. "EST"
+#' @param ... further arguments passed to or from other methods.
 #' @examples
 #' x <- DTG("220815ZDEC17")
 #' as.POSIXct(x)
+#' as.POSIXct(x, tz = "PDT")
 #' @export
-as.POSIXct.DTG <- function (x, tz = "") {
+as.POSIXct.DTG <- function (x, tz = "", ...) {
   x <- lapply(x, splitDTG)
   convertDTG <- function (y) {
     y <- y$values
@@ -107,5 +90,5 @@ as.POSIXct.DTG <- function (x, tz = "") {
     y1 <- as.POSIXct(y1, "%Y-%m-%d %H:%M", tz = .z)
     y1
   }
-  as.POSIXct(sapply(x, convertDTG), origin = "1970-01-01 00:00.00 UTC", tz = tz)
+  as.POSIXct(sapply(x, convertDTG), origin = "1970-01-01 00:00.00 UTC", tz = tz, ... = ...)
 }

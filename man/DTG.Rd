@@ -2,11 +2,8 @@
 % Please edit documentation in R/DTG-ClassFunctions.R
 \name{DTG}
 \alias{DTG}
-\alias{DTG}
-\title{An S4 class to represent a date-time-group (DTG)}
+\title{Change character vector to a DTG vector.}
 \usage{
-DTG(x)
-
 DTG(x)
 }
 \arguments{
@@ -16,8 +13,6 @@ DTG(x)
 A DTG object
 }
 \description{
-An S4 class to represent a date-time-group (DTG)
-
 Change character vector to a DTG vector.
 }
 \examples{
@@ -28,4 +23,3 @@ DTG("182918BDEC17") # Returns Warning
 }
 
 }
-\keyword{internal}

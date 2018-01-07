@@ -43,5 +43,5 @@ z$POSIXUTC.START <- as.POSIXct(z$DTG.START, tz = "GMT")
 z <- z[order(z$POSIXUTC.START), ]
 z[, c("PERIOD COVERED.START", "CO COMMENTS")]
 z[, c("MSG DTG", "PERIOD COVERED.START", "DTG.START", "POSIXUTC.START")]
-y.feb <- subset(y, grep("FEB", x, ignore.case = TRUE))
+
 ```

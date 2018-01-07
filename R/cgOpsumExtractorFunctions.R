@@ -194,10 +194,11 @@ extractFuncs <- function (x = NULL) {
 #' @param object A cgOpsum.list object.
 #' @export
 data.frame.cgOpsum.list <- function (object) {
-  dat2 <- as.list(object@.Data)
+  #dat2 <- as.list(object@.Data)
+  dat2 <- as.list(object)
   dat2 <- plyr::llply(dat2, function (x) {
     z <- names(x)
-    x <- as.list(x@.Data)
+    #x <- as.list(x@.Data)
     funcs <- get("extractFuncs", findFunction("extractFuncs")[[1]])
     funcs <- funcs()[z]
     out <- Map(function (a, b) try(do.call(a, list(b))), a=funcs, b=x[])
