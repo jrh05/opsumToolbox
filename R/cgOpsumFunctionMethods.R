@@ -6,6 +6,74 @@
 #'
 NULL
 
+#' Identify available start and stop paragraph heading keywords from a corpus
+#'
+#' @param x A corpus.
+#' @return A character vector of paragraph names
+#' @export
+getStartStopPairs <- function (x) {
+  docs <- x$documents # Get raw text of each document
+  docs$texts <- toupper(docs$texts)
+  byline <- sapply(docs$texts, strsplit, "\n")
+  parname <- lapply(byline, grep,
+                    pattern = "^[[:blank:]]*[0-9]{1,2}[.]?[A-Z]? [A-Z ,]+:",
+                    value = TRUE)
+  parname <- lapply(parname, gsub,
+                    pattern = "^[0-9]{1,2}[.]? ([A-Z ,]+):.*",
+                    replacement = "\\1")
+  parname <- lapply(parname, function (x) paste(x, stop = c(x[-1], "BT"), sep = "|"))
+  parname <- as.data.frame(table(unlist(parname)), stringAsFactors = FALSE)
+  parname$pair <- as.character(parname$Var1)
+  parname$start <- gsub("\\|.*$", "", parname$pair)
+  parname$stop <- gsub("^[A-Z ]+\\|", "", parname$pair)
+  parname <- parname[, c("start", "stop", "pair", "Freq")]
+  return(parname)
+}
+
+#' Extract a paragraph of text from a corpus using start and end keywords.
+#'
+#' @param x A corpus
+#' @param start A character vector length 1 for the section start keyword
+#' @param stop A character vector length 1 for the section end keyword
+#' @return A dataframe with doc_id and text columns
+#' @export
+extractParagraph <- function (x, start, stop) {
+  # Add error handler if object not a corpus
+    docs <- x$documents # Get raw text of each document
+    docs$texts <- toupper(docs$texts)
+    pre.text <- "\n[[:digit:][:space:][:punct:]]+" # Padding for start/stop phrases
+    post.text <- "[[:space:][:punct:]]+"
+    textforsplit <- paste0(pre.text, toupper(start), post.text, "|",
+                           pre.text, toupper(stop), post.text)
+    # Split each document and extract the middle if both phrases appeared or NA
+    info <- lapply(docs$text, strsplit, textforsplit)
+    info <- lapply(info, function (x) ifelse(length(x[[1]])==3, x[[1]][2], NA))
+    info <- unlist(info)
+    info <- data.frame(text = info, doc_id = docs$doc_id, stringsAsFactors = FALSE)
+    return(info)
+}
+
+#' Create a text dataframe from a corpus using multiple start and end keywords.
+#'
+#' @param mycorpus A corpus
+#' @param pair A dataframe generated using the getStartStopPairs function
+#' @return A dataframe
+#' @export
+mergeData <- function (mycorpus, pair) {
+  x <- mapply(extractParagraph, start = pair$start, stop = pair$stop,
+              MoreArgs = list(x = mycorpus), SIMPLIFY = FALSE)
+  varnames <- paste(pair$start, pair$stop, sep = ",")
+  x <- Map(function (y, varnames) {
+    names(y)[1] <- varnames
+    y
+  }, y = x, varnames = varnames)
+  mymerge <- function (x, y, by.x = "doc_id", by.y = "doc_id") {
+    merge(x, y, by.x = by.x, by.y = by.y)
+  }
+  y <- Reduce(mymerge, x)
+}
+
+
 #' Converts a character textfile to semi-structured list by numbered paragraphs.
 #'
 #' @param dat A character vector.
