@@ -4,7 +4,7 @@
 \alias{slice.cgOpsum.list}
 \title{slice Method for cgOpsum.list}
 \usage{
-slice.cgOpsum.list(object, slice)
+\method{slice}{cgOpsum.list}(object, slice)
 }
 \arguments{
 \item{object}{A cgOpsum.list object.}

@@ -26,11 +26,12 @@ devtools::install_github("jrh05/opsumToolbox")
 
 This command will install the latest stable version of the package from github, and it will also install the package dependencies `plyr` and `dplyr` if they are not already installed. The example below utilizes the `readtext` and `quanteda` packages.
 
-```{r }
+```{r automatic_build}
 library(readtext)
 library(quanteda)
 library(opsumToolbox)
 
+# The code below attempts to automatically build the dataframe
 opsum.dir <- system.file("extdata", package = "opsumToolbox")
 OPSUMS <- readtext(opsum.dir)
 corpus_txt <- corpus(OPSUMS)
@@ -38,10 +39,87 @@ docnames(corpus_txt) <- OPSUMS$doc_id
 x <- texts(corpus_txt)
 y <- cgOpsum(x)
 z <- data.frame.cgOpsum.list(y)
+
+#y <- slice.cgOpsum.list(y, "CURRENT WX DESCRIPTION")
 #z$DTG.START <- DTG(z$`PERIOD COVERED.START`)
 #z$POSIXUTC.START <- as.POSIXct(z$DTG.START, tz = "GMT")
 #z <- z[order(z$POSIXUTC.START), ]
 #z[, c("PERIOD COVERED.START", "CO COMMENTS")]
 #z[, c("MSG DTG", "PERIOD COVERED.START", "DTG.START", "POSIXUTC.START")]
 
+```
+
+
+Here is the approach using another formulation:
+
+```{r}
+# This code gives the programmer that wants some more control of each step
+# of the process the opportunity to do so, but still automates a lot of the
+# process
+
+library(dplyr)
+
+# Import Dataset
+# patsum.dir <- "~/My_Documents/CGA/capshare/capshare/Patsums"
+# opsum.dir <- "~/My_Documents/CGA/capshare/capshare/OPSUM"
+# PATSUMS <- readtext(patsum.dir)
+# OPSUMS <- readtext(opsum.dir)
+
+# Create Corpus
+# corpus_pat <- corpus(PATSUMS)
+# corpus_op <- corpus(OPSUMS)
+# docnames(corpus_op) <- OPSUMS$doc_id
+# x <- texts(corpus_op)
+# y <- cgOpsum(corpus_op)
+
+# Generate Dataframe Holding Raw Text by automatically discovering start/stop pairs
+corpus_op <- corpus_txt
+pair_op <- getStartStopPairs(corpus_txt)
+pair_op <- pair_op[pair_op$Freq > 0.1*max(pair_op$Freq), ]
+pair_op
+opsum_df <- mergeData(corpus_op, pair_op)
+
+# Extract something specific, like the subject lines
+subj <- getLabeledData(corpus_op, "SUBJ:")
+head(subj)
+
+wxdesc <- getLabeledData(corpus_op, "DESC:")
+
+
+# Create Specific Dataframes for Various Sections
+comms_df <- convertToDf(x = opsum_df,
+                        colname = "COMMS SYSTEM,PATROL INTENTIONS",
+                        cols = 2,
+                        idcolname = "doc_id")
+opsum_df <- select(opsum_df, -`COMMS SYSTEM,PATROL INTENTIONS`)
+
+weather_df <- convertToDf(x = opsum_df,
+                          colname = "CURRENT WX DESCRIPTION,MISSION CRITICAL CASUALTIES",
+                          cols = 2,
+                          idcolname = "doc_id")
+opsum_df <- select(opsum_df, -`CURRENT WX DESCRIPTION,MISSION CRITICAL CASUALTIES`)
+
+liquid_df <- convertToDf(x = opsum_df,
+                         colname = "LIQUID LOAD,CURRENT WX DESCRIPTION",
+                         cols = 3,
+                         idcolname = "doc_id")
+opsum_df <- select(opsum_df, -`LIQUID LOAD,CURRENT WX DESCRIPTION`)
+
+opsum_df$`PERIOD COVERED,DATE DPT HP` <-
+  gsub(" +", " ", opsum_df$`PERIOD COVERED,DATE DPT HP`)
+period_df <- convertToDf(x = opsum_df,
+                         colname = "PERIOD COVERED,DATE DPT HP",
+                         cols = 2,
+                         idcolname = "doc_id",
+                         mynames = c("POSIT1", "POSIT2"))
+period_df$doc_id[is.na(period_df$doc_id)] <- period_df$`1`[is.na(period_df$doc_id)]
+period_df <- period_df[,-1]
+opsum_df <- select(opsum_df, -`PERIOD COVERED,DATE DPT HP`)
+
+
+# Merge all dataframes using the doc_id as the primary key
+combined <- Reduce(function(x, y) merge(x, y, all=TRUE), 
+                   list(opsum_df, comms_df, weather_df, liquid_df,
+                        period_df))
+combined[1:2,]
 ```

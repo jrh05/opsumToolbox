@@ -1,8 +1,9 @@
 # Create cgOpsum Functions and Methods
 
 #' @importFrom methods findFunction show
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% slice
 #' @importFrom plyr ldply
+#' @importFrom utils read.table
 #'
 NULL
 
@@ -41,7 +42,7 @@ extractParagraph <- function (x, start, stop) {
   # Add error handler if object not a corpus
     docs <- x$documents # Get raw text of each document
     docs$texts <- toupper(docs$texts)
-    pre.text <- "\n[[:digit:][:space:][:punct:]]+" # Padding for start/stop phrases
+    pre.text <- "\n[[:digit:][:space:].,:]+" # Padding for start/stop phrases
     post.text <- "[[:space:][:punct:]]+"
     textforsplit <- paste0(pre.text, toupper(start), post.text, "|",
                            pre.text, toupper(stop), post.text)
@@ -73,6 +74,89 @@ mergeData <- function (mycorpus, pair) {
   y <- Reduce(mymerge, x)
 }
 
+#' Extract List of labeled text from a Corpus
+#'
+#' @param mycorpus A corpus object
+#' @param label A regular expression to pass to grep
+#'
+#' The function searches for data that matches the search pattern given by
+#' label after splitting the corpus by lines of text.
+#' @examples
+#' file <- system.file("extdata", package = "opsumToolbox")
+#' x <- readtext::readtext(file)
+#' opsum <- quanteda::corpus(x$text)
+#' quanteda::docnames(opsum) <- x$doc_id
+#' y <- getLabeledData(opsum, label = "SUBJ:")
+#' @export
+getLabeledData <- function (mycorpus, label) {
+  docs <- mycorpus$documents # Get raw text of each document
+  docs$texts <- toupper(docs$texts)
+  docsbyline <- strsplit(docs$texts, "\n")
+  out <- lapply(docsbyline, function (x) {
+    grep(pattern = label, x = x, ignore.case = TRUE, value = TRUE)
+  })
+  out <- gsub(pattern = paste0("^(.*)", label, "(.*)$"), replacement = "\\2",
+              out)
+  out <- lapply(out, trimws)
+  names(out) <- docs$`_document`
+  return(out)
+}
+
+#' Convert Text String Vector stored in a Table Format to a list
+#'
+#' @param x text string containing table like data for conversion using read.table
+#' @param cols Integer representing number of columns in table, default value is 2
+#' @param id vector of column indices, usually x$doc_id if converted from a corpus
+#' @param mynames Vector of column names for converted tabular data
+#' @export
+textTableToList <- function (x, cols = 2, id = NULL, mynames = NULL) {
+  if (is.na(x)) return (c(doc_id = id))
+  y <- gsub("([A-Z0-9]):?[ \t]{2,}([^\n])|(: ) *", "\\1%\\2", x) #
+  z <- t(read.table(text=y, sep="%", header = FALSE, fill = NA))
+  #if (nrow(z) == 3 & nchar(paste(z[1,], collapse = "") > 20)) z <- z[-1,]
+  if (cols <= 2) {
+    myinfo <- z[2,]
+    infonames <- trimws(z[1,])
+    infonames <- gsub("^\\([0-9]+\\) |^[A-Z][.] ", "", infonames)
+    myinfo <- sapply(myinfo, trimws)
+  } else {
+    rowsOfNAs <- function (z) apply(z, 1, function (x) all(is.na(x)))
+    colsOfBlanks <- function (z) apply(z, 2, function (x) sum(x==""))
+    z <- z[!rowsOfNAs(z), colsOfBlanks(z) < nrow(z)-1]
+    z <- apply(z, 1, trimws)
+    colnames(z) <- z[1,]
+    rownames(z) <- z[,1]
+    z <- z[-1,-1]
+    infonames <- expand.grid(rownames(z), colnames(z))
+    infonames <- paste(infonames$Var1, infonames$Var2, sep = ".")
+    myinfo <- as.vector(z)
+  }
+  names(myinfo) <- infonames
+  myinfo <- myinfo[myinfo != ""]
+  if (!is.null(mynames)) names(myinfo) <- mynames[1:length(myinfo)]
+  myinfo <- c(doc_id = id, myinfo)
+  myinfo <- list(myinfo)
+  return(myinfo)
+}
+
+#' Convert Text Strings Vector written in a Table Format to a new Data Frame
+#'
+#' @param x A dataframe containing vectors of text strings and an index vector
+#' @param colname Name of column containing table-like text strings
+#' @param cols Integer representing number of columns in table, default value is 2
+#' @param idcolname Name of column containing indices, usually doc_id if converted from a corpus
+#' @param mynames Vector of column names for converted tabular data to pass to textTableToList function
+#' @export
+convertToDf <- function (x, colname, cols = 2, idcolname, mynames = NULL) {
+  current.opt <- default.stringsAsFactors()
+  options(stringsAsFactors = FALSE)
+  y <- mapply(textTableToList, cols = cols, id = x[,idcolname],
+              x = x[, colname],
+              MoreArgs = list(mynames = mynames))
+  out <- ldply(y, rbind, .id = NULL)
+  options(stringsAsFactors = current.opt)
+  return(out)
+}
 
 #' Converts a character textfile to semi-structured list by numbered paragraphs.
 #'
